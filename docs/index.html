@@ -75,6 +75,7 @@ h1 { font-size: 19px; font-weight: 700; margin: 0; }
 .footnote { font-size: 12px; color: var(--ink-faint); text-align: center; padding-top: 8px; }
 .pagination { display: flex; align-items: center; justify-content: center; gap: 12px;
   padding-top: 14px; margin-top: 6px; border-top: 1px solid var(--border); }
+.pagination[hidden] { display: none; }
 .pagination-label { font-family: var(--font-mono); font-variant-numeric: tabular-nums;
   font-size: 12px; color: var(--ink-faint); white-space: nowrap; }
 .pg-btn { font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 12px; border-radius: 7px;
@@ -109,7 +110,7 @@ h1 { font-size: 19px; font-weight: 700; margin: 0; }
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
       <span class="readonly-pill">읽기 전용</span>
-      <span class="update-time">업데이트 2026-07-28 02:37 UTC</span>
+      <span class="update-time">업데이트 2026-07-28 03:59 UTC</span>
     </div>
   </header>
   <div class="grid">
@@ -219,6 +220,7 @@ h1 { font-size: 19px; font-weight: 700; margin: 0; }
 
     if (totalPages <= 1) {
       pagination.hidden = true;
+      pgLabel.textContent = "";
     } else {
       pagination.hidden = false;
       pgLabel.textContent = state.page + " / " + totalPages + " 페이지";
