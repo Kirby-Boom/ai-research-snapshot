@@ -1,0 +1,240 @@
+<title>AI 리서치 — 공유 스냅샷</title>
+<style>
+:root {
+  --bg: #eeebf5; --surface: #ffffff; --surface-2: #f5f2fa; --ink: #211f33;
+  --ink-muted: #5d5a76; --ink-faint: #8e8aa8; --border: #dad5ea;
+  --accent: #6c4fd6; --accent-strong: #5238ad; --accent-soft: #e7e0fa;
+  --good: #3e7d5a; --good-bg: #e4efe8; --warn: #b8862e; --warn-bg: #f5ecd9;
+  --danger: #a6402f; --danger-bg: #f5e3de; --yellow: #8a7300; --yellow-bg: #f8f0bf; --radius: 10px;
+  --font-ui: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard,
+    "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Roboto Mono", monospace;
+  --shadow-sm: 0 1px 2px rgba(33,31,51,.07);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16141f; --surface: #1e1b2c; --surface-2: #262238; --ink: #eae7f5;
+    --ink-muted: #a9a4c4; --ink-faint: #726d8f; --border: #322c46;
+    --accent: #9a7ff0; --accent-strong: #b79cff; --accent-soft: #2e2650;
+    --good: #6fbe93; --good-bg: #1e2e27; --warn: #e3a94d; --warn-bg: #332a16;
+    --danger: #e38070; --danger-bg: #33201c; --yellow: #e6d24a; --yellow-bg: #3a3212;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+.shell { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; display: flex; flex-direction: column; gap: 18px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark { width: 34px; height: 34px; flex: none; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--accent-strong), var(--accent) 60%, transparent 100%);
+  box-shadow: 0 0 0 1px var(--border); }
+h1 { font-size: 19px; font-weight: 700; margin: 0; }
+.subtitle { margin: 2px 0 0; font-size: 13px; color: var(--ink-muted); }
+.readonly-pill { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+  background: var(--surface-2); color: var(--ink-faint); border: 1px solid var(--border); }
+.update-time { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); padding: 18px; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.filter-btn { font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-faint); cursor: pointer; }
+.filter-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-strong); }
+.mn-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mn-row { padding: 13px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+  display: flex; flex-direction: column; gap: 7px; }
+.mn-row-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.mn-title-line { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-width: 0; }
+.mn-title { font-size: 14.5px; font-weight: 700; }
+.badge-new { font-size: 10.5px; font-weight: 700; color: var(--yellow); background: var(--yellow-bg);
+  border-radius: 5px; padding: 1px 6px; }
+.mn-meta-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border);
+  color: var(--ink-muted); background: var(--surface-2); }
+.tag-source { color: var(--accent-strong); border-color: var(--accent); background: var(--accent-soft); }
+.tag-keyword { color: var(--ink-muted); border-style: dashed; }
+.tag-unknown-date { color: var(--warn); border-color: var(--warn); background: var(--warn-bg); }
+.mn-date-group { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex: none; }
+.mn-date { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); white-space: nowrap; }
+.mn-summary { font-size: 13px; color: var(--ink-muted); line-height: 1.5; margin: 0; }
+.mn-summary b { color: var(--ink); font-weight: 600; }
+.mn-footer { display: flex; align-items: center; }
+.cluster-card { border: 1px solid var(--accent); border-radius: 8px; background: var(--accent-soft);
+  padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.cluster-label { font-size: 11.5px; font-weight: 700; color: var(--accent-strong); }
+.cluster-card .mn-row { background: var(--surface); }
+.mn-row-link { text-decoration: none; color: inherit; cursor: pointer; transition: background .12s ease; }
+.mn-row-link:hover { background: var(--surface-2); }
+.empty-state { padding: 40px 12px; text-align: center; color: var(--ink-faint); font-size: 13px; }
+.footnote { font-size: 12px; color: var(--ink-faint); text-align: center; padding-top: 8px; }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding-top: 14px; margin-top: 6px; border-top: 1px solid var(--border); }
+.pagination-label { font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 12px; color: var(--ink-faint); white-space: nowrap; }
+.pg-btn { font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 12px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); cursor: pointer; }
+.pg-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-strong); }
+.pg-btn:disabled { opacity: .45; cursor: default; }
+.grid { display: grid; grid-template-columns: minmax(240px, 300px) 1fr; gap: 20px; align-items: start; }
+@media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+.left-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.kw-section { display: flex; flex-direction: column; gap: 10px; }
+.kw-tag-scroll { max-height: 420px; overflow-y: auto; padding-right: 2px; }
+.kw-col-heading { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700;
+  color: var(--ink-muted); text-transform: uppercase; letter-spacing: .03em; margin: 0; }
+.kw-count-badge { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--ink-faint); border: 1px solid var(--border); }
+.kw-tag-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.kw-tag { font-size: 12.5px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--ink); display: flex; align-items: baseline; gap: 5px; }
+.kw-tag-name { font-weight: 600; }
+.kw-alias { color: var(--ink-faint); font-size: 11px; }
+.kw-alias::before { content: "· "; }
+.kw-empty { font-size: 12.5px; color: var(--ink-faint); margin: 0; }
+</style>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <h1>AI 리서치</h1>
+        <p class="subtitle">AI 채팅 플랫폼 신규 발견 · 추적 워치리스트 모니터링 — 공유용 스냅샷</p>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span class="readonly-pill">읽기 전용</span>
+      <span class="update-time">업데이트 2026-07-28 01:26 UTC</span>
+    </div>
+  </header>
+  <div class="grid">
+    <div class="left-col"><section class="panel kw-section"><h2 class="kw-col-heading">발견용 키워드<span class="kw-count-badge">7</span></h2><div class="kw-tag-scroll"><ul class="kw-tag-list"><li class="kw-tag"><span class="kw-tag-name">출시</span></li><li class="kw-tag"><span class="kw-tag-name">업뎃</span></li><li class="kw-tag"><span class="kw-tag-name">플폼</span></li><li class="kw-tag"><span class="kw-tag-name">IP AI 출시</span></li><li class="kw-tag"><span class="kw-tag-name">AI 챗 출시</span></li><li class="kw-tag"><span class="kw-tag-name">AI 채팅 플랫폼</span></li><li class="kw-tag"><span class="kw-tag-name">신규 AI 채팅 플랫폼</span></li></ul></div></section><section class="panel kw-section"><h2 class="kw-col-heading">추적 워치리스트<span class="kw-count-badge">16</span></h2><div class="kw-tag-scroll"><ul class="kw-tag-list"><li class="kw-tag"><span class="kw-tag-name">엘린</span><span class="kw-alias">엘</span></li><li class="kw-tag"><span class="kw-tag-name">티팟</span><span class="kw-alias">팊</span></li><li class="kw-tag"><span class="kw-tag-name">케이브덕</span><span class="kw-alias">케덕, 케, 개덕</span></li><li class="kw-tag"><span class="kw-tag-name">베이글챗</span></li><li class="kw-tag"><span class="kw-tag-name">둠칫</span></li><li class="kw-tag"><span class="kw-tag-name">팅글챗</span></li><li class="kw-tag"><span class="kw-tag-name">러비더비</span><span class="kw-alias">럽덥</span></li><li class="kw-tag"><span class="kw-tag-name">티키타</span></li><li class="kw-tag"><span class="kw-tag-name">로판 AI</span><span class="kw-alias">로판AI, 로판, 롶</span></li><li class="kw-tag"><span class="kw-tag-name">위프</span></li><li class="kw-tag"><span class="kw-tag-name">플레이툰</span><span class="kw-alias">플툰, 플</span></li><li class="kw-tag"><span class="kw-tag-name">탑툰챗</span></li><li class="kw-tag"><span class="kw-tag-name">투킷</span></li><li class="kw-tag"><span class="kw-tag-name">베이비챗</span><span class="kw-alias">바베챗, 바베</span></li><li class="kw-tag"><span class="kw-tag-name">크랙</span></li><li class="kw-tag"><span class="kw-tag-name">제타</span><span class="kw-alias">젵</span></li></ul></div></section></div>
+    <main class="panel">
+      <div class="filter-row" id="filterRow"><button type="button" class="filter-btn active" data-filter="전체">전체</button><button type="button" class="filter-btn" data-filter="신규">신규</button><button type="button" class="filter-btn" data-filter="업데이트">업데이트</button><button type="button" class="filter-btn" data-filter="콘텐츠">콘텐츠</button><button type="button" class="filter-btn" data-filter="이벤트">이벤트</button><button type="button" class="filter-btn" data-filter="유저의견">유저의견</button></div>
+      <div id="mnSections"><ul class="mn-list"><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=aichatting&amp;no=362760" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">노디</span><span class="badge-new">New</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-28</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: AI 챗 출시</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> 신생 AI 채팅 앱으로 알파 테스터 모집 공지를 게시함. · <b>차별화</b> 미상</p><div class="mn-footer"><span class="tag">신규</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=genit&amp;no=12006" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">젠잇(Genit)</span><span class="badge-new">New</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-28</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 로판 AI</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> 장시간(2천 턴 단위) 대화 세션을 지원하는 AI 캐릭터챗 서비스. · <b>차별화</b> 미상</p><div class="mn-footer"><span class="tag">유저의견</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=aichatting&amp;no=362792" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">케이브덕</span><span class="badge-new">New</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-28</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 케이브덕</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> 이용자 대상 &#x27;편지 이벤트&#x27;를 진행함. · <b>차별화</b> 미상</p><div class="mn-footer"><span class="tag">이벤트</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mini/board/view/?id=wrtnw&amp;no=244023" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">크랙(뤼튼 AI)</span><span class="badge-new">New</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-28</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 크랙</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> 미상 · <b>차별화</b> AI 응답 품질 저하 원인으로 크랙 기능이 지목됨.</p><div class="mn-footer"><span class="tag">유저의견</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=tookit&amp;no=4" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">투킷(Tookit)</span><span class="badge-new">New</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-28</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 투킷</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> 여름 시즌 한정 AI 모델 이용 할인 이벤트를 공식 진행. · <b>차별화</b> 미상</p><div class="mn-footer"><span class="tag">이벤트</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=aichatting&amp;no=362589" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">케이브덕</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-27</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 케이브덕</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> &#x27;우표&#x27;라는 명칭의 부가 기능/아이템을 제공하는 것으로 추정(정확한 용도 불명). · <b>차별화</b> 미상</p><div class="mn-footer"><span class="tag">콘텐츠</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=aiotomechatting&amp;no=11559" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">위프</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-27</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 위프</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> AI 캐릭터 채팅(여성향) 서비스. · <b>차별화</b> 미상</p><div class="mn-footer"><span class="tag">유저의견</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=aichatting&amp;no=362225" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">미상</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-27</span><span class="mn-date">게시 2026.07.25</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 위프</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> 복수의 AI 캐릭터 채팅 플랫폼(케이브덕/로판AI/엘린/기타 플랫폼 등으로 추정)이 시장에 공존. · <b>차별화</b> 이용자가 여러 경쟁 플랫폼 중 추천을 구하는 게시물로 시장 구도를 보여줌.</p><div class="mn-footer"><span class="tag">유저의견</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=aiotomechatting&amp;no=11561" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">플레이툰</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-27</span><span class="mn-date">게시 2026.07.27</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 플레이툰</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> AI 캐릭터 채팅(여성향) 서비스로 추정. · <b>차별화</b> 미상</p><div class="mn-footer"><span class="tag">유저의견</span></div></a></li><li><a class="mn-row mn-row-link" href="https://gall.dcinside.com/mgallery/board/view/?id=aichatting&amp;no=362367" target="_blank" rel="noopener"><div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">티팟</span></div><span class="mn-date-group"><span class="mn-date">수집 2026-07-27</span><span class="mn-date">게시 2026.07.26</span></span></div><div class="mn-meta-row"><span class="tag tag-source">디시인사이드</span><span class="tag tag-keyword">검색어: 티팟</span><span class="tag">AI 캐릭터챗</span></div><p class="mn-summary"><b>핵심기능</b> Claude Opus 5(&#x27;5푸스&#x27;) 모델을 백엔드로 사용하는 것으로 추정. · <b>차별화</b> 응답 스타일이 타사 서비스 &#x27;Fable(페이블)&#x27;과 유사하다는 이용자 체감 비교.</p><div class="mn-footer"><span class="tag">업데이트</span></div></a></li></ul></div>
+      <div class="pagination" id="pagination" hidden>
+        <button type="button" class="pg-btn" id="pgPrev" disabled>‹ 이전</button>
+        <span class="pagination-label" id="pgLabel"></span>
+        <button type="button" class="pg-btn" id="pgNext" disabled>다음 ›</button>
+      </div>
+    </main>
+  </div>
+  <p class="footnote">이 페이지는 공유 스냅샷 새로고침 시점 기준 정적 스냅샷입니다. 카테고리는 사람이 대시보드에서
+    검토대기 상태를 직접 바꿔야만 정해지며, 이 페이지가 임의로 재분류하지 않습니다. 편집·재수집은
+    로컬 대시보드에서만 가능합니다.</p>
+</div>
+<script>
+(function() {
+  var ALL_ITEMS = [{"service_name": "노디", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aichatting&no=362760", "source": "디시인사이드", "keyword": "AI 챗 출시", "category": ["AI 캐릭터챗"], "core_feature": "신생 AI 채팅 앱으로 알파 테스터 모집 공지를 게시함.", "differentiation": "미상", "status": "신규", "collected_date": "2026-07-28", "posted_at": "2026.07.27 18:04", "cluster_id": null, "is_new": true}, {"service_name": "젠잇(Genit)", "url": "https://gall.dcinside.com/mgallery/board/view/?id=genit&no=12006", "source": "디시인사이드", "keyword": "로판 AI", "category": ["AI 캐릭터챗"], "core_feature": "장시간(2천 턴 단위) 대화 세션을 지원하는 AI 캐릭터챗 서비스.", "differentiation": "미상", "status": "유저의견", "collected_date": "2026-07-28", "posted_at": "2026.07.27 10:49", "cluster_id": null, "is_new": true}, {"service_name": "케이브덕", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aichatting&no=362792", "source": "디시인사이드", "keyword": "케이브덕", "category": ["AI 캐릭터챗"], "core_feature": "이용자 대상 '편지 이벤트'를 진행함.", "differentiation": "미상", "status": "이벤트", "collected_date": "2026-07-28", "posted_at": "2026.07.27 19:55", "cluster_id": null, "is_new": true}, {"service_name": "크랙(뤼튼 AI)", "url": "https://gall.dcinside.com/mini/board/view/?id=wrtnw&no=244023", "source": "디시인사이드", "keyword": "크랙", "category": ["AI 캐릭터챗"], "core_feature": "미상", "differentiation": "AI 응답 품질 저하 원인으로 크랙 기능이 지목됨.", "status": "유저의견", "collected_date": "2026-07-28", "posted_at": "2026.07.27 21:06", "cluster_id": null, "is_new": true}, {"service_name": "투킷(Tookit)", "url": "https://gall.dcinside.com/mgallery/board/view/?id=tookit&no=4", "source": "디시인사이드", "keyword": "투킷", "category": ["AI 캐릭터챗"], "core_feature": "여름 시즌 한정 AI 모델 이용 할인 이벤트를 공식 진행.", "differentiation": "미상", "status": "이벤트", "collected_date": "2026-07-28", "posted_at": "2026.07.27 12:57", "cluster_id": null, "is_new": true}, {"service_name": "케이브덕", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aichatting&no=362589", "source": "디시인사이드", "keyword": "케이브덕", "category": ["AI 캐릭터챗"], "core_feature": "'우표'라는 명칭의 부가 기능/아이템을 제공하는 것으로 추정(정확한 용도 불명).", "differentiation": "미상", "status": "콘텐츠", "collected_date": "2026-07-27", "posted_at": "2026.07.27 01:23", "cluster_id": null, "is_new": false}, {"service_name": "위프", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aiotomechatting&no=11559", "source": "디시인사이드", "keyword": "위프", "category": ["AI 캐릭터챗"], "core_feature": "AI 캐릭터 채팅(여성향) 서비스.", "differentiation": "미상", "status": "유저의견", "collected_date": "2026-07-27", "posted_at": "2026.07.27 06:32", "cluster_id": null, "is_new": false}, {"service_name": "미상", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aichatting&no=362225", "source": "디시인사이드", "keyword": "위프", "category": ["AI 캐릭터챗"], "core_feature": "복수의 AI 캐릭터 채팅 플랫폼(케이브덕/로판AI/엘린/기타 플랫폼 등으로 추정)이 시장에 공존.", "differentiation": "이용자가 여러 경쟁 플랫폼 중 추천을 구하는 게시물로 시장 구도를 보여줌.", "status": "유저의견", "collected_date": "2026-07-27", "posted_at": "2026.07.25 22:24", "cluster_id": null, "is_new": false}, {"service_name": "플레이툰", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aiotomechatting&no=11561", "source": "디시인사이드", "keyword": "플레이툰", "category": ["AI 캐릭터챗"], "core_feature": "AI 캐릭터 채팅(여성향) 서비스로 추정.", "differentiation": "미상", "status": "유저의견", "collected_date": "2026-07-27", "posted_at": "2026.07.27 08:46", "cluster_id": null, "is_new": false}, {"service_name": "티팟", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aichatting&no=362367", "source": "디시인사이드", "keyword": "티팟", "category": ["AI 캐릭터챗"], "core_feature": "Claude Opus 5('5푸스') 모델을 백엔드로 사용하는 것으로 추정.", "differentiation": "응답 스타일이 타사 서비스 'Fable(페이블)'과 유사하다는 이용자 체감 비교.", "status": "업데이트", "collected_date": "2026-07-27", "posted_at": "2026.07.26 12:42", "cluster_id": null, "is_new": false}, {"service_name": "티팟", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aichatting&no=362341", "source": "디시인사이드", "keyword": "티팟", "category": ["AI 캐릭터챗"], "core_feature": "대화 맥락을 유지하는 장기 기억 기능 보유.", "differentiation": "미상", "status": "유저의견", "collected_date": "2026-07-27", "posted_at": "2026.07.26 10:45", "cluster_id": null, "is_new": false}, {"service_name": "미상(케이브덕·플레이툰 비교)", "url": "https://gall.dcinside.com/mgallery/board/view/?id=aiotomechatting&no=11475", "source": "디시인사이드", "keyword": "플레이툰", "category": ["AI 캐릭터챗"], "core_feature": "AI 캐릭터챗 서비스의 응답 글자수(출력 길이) 비교.", "differentiation": "두 서비스(케이브덕/플레이툰) 간 응답 길이를 비교하는 이용자 게시물.", "status": "유저의견", "collected_date": "2026-07-27", "posted_at": "2026.07.25 23:02", "cluster_id": null, "is_new": false}, {"service_name": "바베챗(Babechat)", "url": "https://gall.dcinside.com/mini/board/view/?id=babe&no=285304", "source": "디시인사이드", "keyword": "베이비챗", "category": ["AI 캐릭터챗"], "core_feature": "'알플'(요금제/상품명으로 추정) 가격 정보 제공.", "differentiation": "미상", "status": "유저의견", "collected_date": "2026-07-27", "posted_at": "2026.07.27 00:48", "cluster_id": null, "is_new": false}];
+  var PAGE_SIZE = 10;
+  var state = { filter: "전체", page: 1 };
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function filteredItems() {
+    if (state.filter === "전체") return ALL_ITEMS;
+    return ALL_ITEMS.filter(function (i) { return i.status === state.filter; });
+  }
+
+  function renderCard(item) {
+    var collectedStr = (item.collected_date || "-").slice(0, 10);
+    var postedStr = item.posted_at ? String(item.posted_at).slice(0, 10) : null;
+    var dateHtml = '<span class="mn-date-group"><span class="mn-date">수집 ' + esc(collectedStr) + '</span>' +
+      (postedStr ? '<span class="mn-date">게시 ' + esc(postedStr) + '</span>'
+                 : '<span class="tag tag-unknown-date">게시일 미상</span>') +
+      '</span>';
+    var newBadge = item.is_new ? '<span class="badge-new">New</span>' : "";
+    var sourceTag = item.source ? '<span class="tag tag-source">' + esc(item.source) + '</span>' : "";
+    var keywordTag = item.keyword ? '<span class="tag tag-keyword">검색어: ' + esc(item.keyword) + '</span>' : "";
+    var catHtml = (item.category || []).map(function (c) { return '<span class="tag">' + esc(c) + '</span>'; }).join("");
+    var summaryHtml = "";
+    if (item.core_feature || item.differentiation) {
+      var diffPart = item.differentiation ? ' · <b>차별화</b> ' + esc(item.differentiation) : "";
+      summaryHtml = '<p class="mn-summary"><b>핵심기능</b> ' + esc(item.core_feature) + diffPart + '</p>';
+    }
+    var statusTag = '<span class="tag">' + esc(item.status) + '</span>';
+    var inner = '<div class="mn-row-top"><div class="mn-title-line"><span class="mn-title">' + esc(item.service_name) + '</span>' + newBadge + '</div>' +
+      dateHtml + '</div>' +
+      '<div class="mn-meta-row">' + sourceTag + keywordTag + catHtml + '</div>' +
+      summaryHtml +
+      '<div class="mn-footer">' + statusTag + '</div>';
+    if (item.url) {
+      return '<li><a class="mn-row mn-row-link" href="' + esc(item.url) + '" target="_blank" rel="noopener">' + inner + '</a></li>';
+    }
+    return '<li class="mn-row">' + inner + '</li>';
+  }
+
+  function groupByCluster(items) {
+    var seen = {}, groups = [];
+    items.forEach(function (m) {
+      if (!m.cluster_id) { groups.push({ solo: true, item: m }); return; }
+      if (seen[m.cluster_id] === undefined) { seen[m.cluster_id] = groups.length; groups.push({ solo: false, items: [m] }); }
+      else { groups[seen[m.cluster_id]].items.push(m); }
+    });
+    return groups;
+  }
+
+  function renderClusterGroups(groups) {
+    return groups.map(function (g) {
+      if (g.solo) return renderCard(g.item);
+      return '<div class="cluster-card"><div class="cluster-label">유사 사건 묶음 · ' + g.items.length + '건</div>' +
+        '<ul class="mn-list">' + g.items.map(renderCard).join("") + '</ul></div>';
+    }).join("");
+  }
+
+  var sections = document.getElementById("mnSections");
+  var pagination = document.getElementById("pagination");
+  var pgPrev = document.getElementById("pgPrev");
+  var pgNext = document.getElementById("pgNext");
+  var pgLabel = document.getElementById("pgLabel");
+
+  function render() {
+    var items = filteredItems();
+    var totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+    if (state.page > totalPages) state.page = totalPages;
+    if (state.page < 1) state.page = 1;
+    var startIdx = (state.page - 1) * PAGE_SIZE;
+    var pageItems = items.slice(startIdx, startIdx + PAGE_SIZE);
+
+    if (items.length === 0) {
+      sections.innerHTML = '<div class="empty-state">해당 조건의 결과가 없어요.</div>';
+    } else {
+      sections.innerHTML = '<ul class="mn-list">' + renderClusterGroups(groupByCluster(pageItems)) + '</ul>';
+    }
+
+    if (totalPages <= 1) {
+      pagination.hidden = true;
+    } else {
+      pagination.hidden = false;
+      var rangeStart = items.length ? startIdx + 1 : 0;
+      var rangeEnd = startIdx + pageItems.length;
+      pgLabel.textContent = rangeStart + "–" + rangeEnd + " / " + items.length + "건 · " + state.page + " / " + totalPages + " 페이지";
+      pgPrev.disabled = state.page <= 1;
+      pgNext.disabled = state.page >= totalPages;
+    }
+  }
+
+  pgPrev.addEventListener("click", function () { if (state.page > 1) { state.page -= 1; render(); } });
+  pgNext.addEventListener("click", function () {
+    var totalPages = Math.max(1, Math.ceil(filteredItems().length / PAGE_SIZE));
+    if (state.page < totalPages) { state.page += 1; render(); }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("#filterRow .filter-btn"), function (btn) {
+    btn.addEventListener("click", function () {
+      Array.prototype.forEach.call(document.querySelectorAll("#filterRow .filter-btn"), function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      state.filter = btn.getAttribute("data-filter");
+      state.page = 1;
+      render();
+    });
+  });
+
+  render();
+})();
+</script>
